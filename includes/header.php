@@ -168,28 +168,6 @@ if (isset($_GET['logout'])) {
             transform: translateY(-2px);
         }
         
-        /* Delete button styles */
-        .btn-delete {
-            background-color: #e31837;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            display: inline-block;
-            text-align: center;
-        }
-        
-        .btn-delete:hover {
-            background-color: #c4122f;
-            transform: translateY(-2px);
-            color: white;
-            text-decoration: none;
-        }
-        
         .main-content {
             min-height: 100vh;
             padding: 30px 0;
@@ -260,7 +238,7 @@ if (isset($_GET['logout'])) {
     <div class="sidebar-overlay"></div>
     
     <!-- Sidebar -->
-    <?php include 'sidebar.php'; ?>
+    <?php include __DIR__ . '/sidebar.php'; ?>
     
     <!-- Mobile Menu Toggle -->
     <button class="mobile-menu-toggle" aria-label="Toggle menu">
@@ -277,6 +255,11 @@ if (isset($_GET['logout'])) {
             if (isset($_SESSION['message'])) {
                 echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['message']) . '</div>';
                 unset($_SESSION['message']);
+            }
+            // Some scripts set 'success' instead of 'message'
+            if (isset($_SESSION['success'])) {
+                echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success']) . '</div>';
+                unset($_SESSION['success']);
             }
             if (isset($_SESSION['error'])) {
                 echo '<div class="alert alert-error">' . htmlspecialchars($_SESSION['error']) . '</div>';

@@ -28,10 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['time_in', 'time
             } else {
                 // Create new record with current datetime for check_in
                 $current_datetime = date('Y-m-d H:i:s');
-                $stmt = $pdo->prepare("
-                    INSERT INTO attendance (user_id, check_in, status) 
-                    VALUES (?, ?, 'present')
-                ");
+                        $stmt = $pdo->prepare(
+                            "INSERT INTO attendance (user_id, check_in) VALUES (?, ?)"
+                        );
                 $stmt->execute([$user_id, $current_datetime]);
                 $_SESSION['message'] = 'Time in recorded successfully at ' . date('h:i A', strtotime($current_datetime));
             }

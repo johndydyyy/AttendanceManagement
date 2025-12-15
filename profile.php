@@ -1,26 +1,15 @@
 <?php
 require_once 'includes/header.php';
-
-// Database connection
-$conn = new mysqli('localhost', 'root', '', 'attendance_db');
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-// Ensure MySQL session timezone is Philippines (GMT+8)
-$conn->query("SET time_zone = '+08:00'");
+require_once __DIR__ . '/config/db_connect.php';
 
 $user_id = $_SESSION['user_id'];
 $success = '';
 $error = '';
 
 // Fetch user data
-$sql = "SELECT * FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$stmt->close();
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->execute([$user_id]);
+$user = $stmt->fetch();
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,14 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Please enter a valid email address';
     } else {
         // Check if email is already taken by another user
-        $sql = "SELECT id FROM users WHERE email = ? AND id != ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $email, $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
-        
-        if ($result->num_rows > 0) {
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+        $stmt->execute([$email, $user_id]);
+        $existing = $stmt->fetch();
+
+        if ($existing) {
             $error = 'Email is already in use by another account';
         } else {
             // Handle password change if requested
@@ -70,30 +56,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Update user data
                 if (!empty($password_update)) {
                     $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-                    $sql = "UPDATE users SET name = ?, email = ?{$password_update} WHERE id = ?";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("sssi", $name, $email, $hashed_password, $user_id);
+                    $sql = "UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?";
+                    $stmt = $pdo->prepare($sql);
+                    $ok = $stmt->execute([$name, $email, $hashed_password, $user_id]);
                 } else {
                     $sql = "UPDATE users SET name = ?, email = ? WHERE id = ?";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("ssi", $name, $email, $user_id);
+                    $stmt = $pdo->prepare($sql);
+                    $ok = $stmt->execute([$name, $email, $user_id]);
                 }
-                
-                if ($stmt->execute()) {
+
+                if ($ok) {
                     // Update session data
                     $_SESSION['username'] = $name;
                     $success = 'Profile updated successfully!';
                     // Refresh user data
-                    $sql = "SELECT * FROM users WHERE id = ?";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("i", $user_id);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $user = $result->fetch_assoc();
+                    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+                    $stmt->execute([$user_id]);
+                    $user = $stmt->fetch();
                 } else {
-                    $error = 'Error updating profile: ' . $conn->error;
+                    $error = 'Error updating profile';
                 }
-                $stmt->close();
             }
         }
     }

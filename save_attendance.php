@@ -14,13 +14,13 @@ if (!isset($_SESSION['user_id'])) {
 $response = ['success' => false, 'message' => ''];
 
 try {
-    $conn = new mysqli('localhost', 'root', '', 'attendance_db');
-    
-    if ($conn->connect_error) {
-        throw new Exception("Connection failed: " . $conn->connect_error);
+    // Use PDO connection from config/db_connect.php
+    // Ensure session timezone (non-fatal)
+    try {
+        $pdo->exec("SET time_zone = '+08:00'");
+    } catch (PDOException $e) {
+        // ignore
     }
-    // Ensure MySQL session timezone is Philippines (GMT+8)
-    $conn->query("SET time_zone = '+08:00'");
 
     $action = $_POST['action'] ?? '';
 
@@ -32,23 +32,20 @@ try {
 
         // Check if already checked in today
         $sql = "SELECT id FROM attendance WHERE user_id = ? AND DATE(check_in) = CURDATE() AND check_out IS NULL";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows > 0) {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$user_id]);
+        $existing = $stmt->fetch();
+
+        if ($existing) {
             $response['message'] = 'You have already checked in today';
         } else {
             $sql = "INSERT INTO attendance (user_id, check_in, notes) VALUES (?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("iss", $user_id, $check_in, $notes);
-            
-            if ($stmt->execute()) {
+            $stmt = $pdo->prepare($sql);
+            if ($stmt->execute([$user_id, $check_in, $notes])) {
                 $response['success'] = true;
                 $response['message'] = 'Successfully checked in at ' . date('g:i A', strtotime($check_in));
             } else {
-                throw new Exception("Error checking in: " . $stmt->error);
+                throw new Exception("Error checking in");
             }
         }
     } 
@@ -60,25 +57,22 @@ try {
         // Verify ownership for non-admin users
         if ($_SESSION['role'] !== 'admin') {
             $sql = "SELECT id FROM attendance WHERE id = ? AND user_id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ii", $attendance_id, $_SESSION['user_id']);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            if ($result->num_rows === 0) {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$attendance_id, $_SESSION['user_id']]);
+            $found = $stmt->fetch();
+
+            if (!$found) {
                 throw new Exception("Invalid attendance record");
             }
         }
 
         $sql = "UPDATE attendance SET check_out = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $check_out, $attendance_id);
-        
-        if ($stmt->execute()) {
+        $stmt = $pdo->prepare($sql);
+        if ($stmt->execute([$check_out, $attendance_id])) {
             $response['success'] = true;
             $response['message'] = 'Successfully checked out at ' . date('g:i A', strtotime($check_out));
         } else {
-            throw new Exception("Error checking out: " . $stmt->error);
+            throw new Exception("Error checking out");
         }
     }
     elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'manual_entry') {
@@ -93,22 +87,19 @@ try {
         $notes = $_POST['notes'] ?? '';
 
         $sql = "INSERT INTO attendance (user_id, check_in, check_out, notes, is_manual) VALUES (?, ?, ?, ?, 1)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isss", $user_id, $check_in, $check_out, $notes);
-        
-        if ($stmt->execute()) {
+        $stmt = $pdo->prepare($sql);
+        if ($stmt->execute([$user_id, $check_in, $check_out, $notes])) {
             $response['success'] = true;
             $response['message'] = 'Attendance record added successfully';
         } else {
-            throw new Exception("Error saving attendance: " . $stmt->error);
+            throw new Exception("Error saving attendance");
         }
     }
     else {
         $response['message'] = 'Invalid action';
     }
 
-    $stmt->close();
-    $conn->close();
+    // PDO will clean up automatically
 
 } catch (Exception $e) {
     $response['message'] = $e->getMessage();

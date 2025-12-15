@@ -13,22 +13,12 @@ if ($employee_id <= 0) {
     exit();
 }
 
-// Database connection
-    $conn = new mysqli('localhost', 'root', '', 'attendance_db');
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    // Ensure MySQL session timezone is Philippines (GMT+8)
-    $conn->query("SET time_zone = '+08:00'");
+require_once __DIR__ . '/config/db_connect.php';
 
 // Fetch employee details
-$sql = "SELECT * FROM users WHERE id = ? AND role != 'admin'";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $employee_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$employee = $result->fetch_assoc();
-$stmt->close();
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ? AND role != 'admin'");
+$stmt->execute([$employee_id]);
+$employee = $stmt->fetch();
 
 if (!$employee) {
     $_SESSION['error'] = 'Employee not found';
@@ -37,39 +27,28 @@ if (!$employee) {
 }
 
 // Fetch attendance summary
-$sql = "SELECT 
+$stmt = $pdo->prepare("SELECT 
             COUNT(*) as total_days,
             SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, check_in, COALESCE(check_out, NOW())))) as total_hours
         FROM attendance 
-        WHERE user_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $employee_id);
-$stmt->execute();
-$summary = $stmt->get_result()->fetch_assoc();
-$stmt->close();
+        WHERE user_id = ?");
+$stmt->execute([$employee_id]);
+$summary = $stmt->fetch();
 
 // Fetch recent attendance
-$sql = "SELECT * FROM attendance 
+$stmt = $pdo->prepare("SELECT * FROM attendance 
         WHERE user_id = ? 
         ORDER BY check_in DESC 
-        LIMIT 10";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $employee_id);
-$stmt->execute();
-$recent_attendance = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
+        LIMIT 10");
+$stmt->execute([$employee_id]);
+$recent_attendance = $stmt->fetchAll();
 
 // Fetch notes
-$sql = "SELECT * FROM employee_notes 
+$stmt = $pdo->prepare("SELECT * FROM employee_notes 
         WHERE user_id = ? 
-        ORDER BY note_date DESC, created_at DESC";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $employee_id);
-$stmt->execute();
-$notes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
-
-$conn->close();
+        ORDER BY note_date DESC, created_at DESC");
+$stmt->execute([$employee_id]);
+$notes = $stmt->fetchAll();
 ?>
 
 <div class="container">

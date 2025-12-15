@@ -41,7 +41,16 @@ $attendance = $stmt->fetchAll();
         </a>
     </div>
     
-    
+    <div class="add-note-form">
+        <h3>Add Note</h3>
+        <form method="POST" action="save_note.php" class="note-form">
+            <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+            <div class="form-group">
+                <textarea name="note" rows="4" required placeholder="Enter your note here..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Note</button>
+        </form>
+    </div>
     
     <div class="attendance-records">
         <h3>Attendance History (Last 30 Days)</h3>
@@ -74,9 +83,9 @@ $attendance = $stmt->fetchAll();
                             }
                             
                             $status_class = '';
-                            if ($record['status'] === 'present') {
+                            if (isset($record['status']) && $record['status'] === 'present') {
                                 $status_class = 'status-present';
-                            } elseif ($record['status'] === 'late') {
+                            } elseif (isset($record['status']) && $record['status'] === 'late') {
                                 $status_class = 'status-late';
                             } else {
                                 $status_class = 'status-absent';

@@ -35,7 +35,7 @@ $employees = $stmt->fetchAll();
                     <td><?php echo htmlspecialchars($employee['username']); ?></td>
                     <td class="actions">
                         <a href="view_attendance.php?user_id=<?php echo $employee['id']; ?>" class="btn btn-view">View</a>
-                        <a href="delete_employee.php?id=<?php echo $employee['id']; ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to discharge this employee? This action cannot be undone.')">Discharge</a>
+                        <a href="delete_employee.php?id=<?php echo $employee['id']; ?>" class="btn btn-danger" style="background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; text-decoration: none; display: inline-block;" onclick="return confirm('Are you sure you want to discharge this employee? This action cannot be undone.')">Discharge</a>
                     </td>
                 </tr>
                 <?php endforeach; ?>
