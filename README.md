@@ -18,15 +18,15 @@ A streamlined, web-based solution for managing employee attendance, tracking rec
 
 ### 1. Secure Login Portal
 The gateway to the system, featuring a clean and minimal design.
-![Login Screen](https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/path/to/login_screenshot.png?raw=true)
+![Login Screen](https://github.com/johndydyyy/AttendanceManagement/blob/main/Screenshot%202025-12-24%20181617.png)
 
 ### 2. Admin Dashboard
 A comprehensive view of the employee roster with quick actions and an integrated "Add New Employee" form.
-![Admin Dashboard](https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/path/to/dashboard_screenshot.png?raw=true)
+![Admin Dashboard](https://github.com/johndydyyy/AttendanceManagement/blob/main/Screenshot%202025-12-24%20181656.png)
 
 ### 3. Attendance Details & Notes
 Detailed view for individual employees, allowing admins to track history and save important notes.
-![Attendance View](https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/path/to/details_screenshot.png?raw=true)
+![Attendance View](https://github.com/johndydyyy/AttendanceManagement/blob/main/Screenshot%202025-12-24%20181706.png)
 
 ---
 
@@ -70,7 +70,3 @@ Contributions are what make the open-source community such an amazing place to l
 
 ---
 **Developed by John Lemuel Dayaday** JohnLemuelDayaday.web.app 
-
-![Image](https://github.com/johndydyyy/AttendanceManagement/blob/main/Screenshot%202025-12-24%20181617.png)
-![Image](https://github.com/johndydyyy/AttendanceManagement/blob/main/Screenshot%202025-12-24%20181656.png)
-![Image](https://github.com/johndydyyy/AttendanceManagement/blob/main/Screenshot%202025-12-24%20181706.png)
