@@ -70,3 +70,7 @@ Contributions are what make the open-source community such an amazing place to l
 
 ---
 **Developed by John Lemuel Dayaday** JohnLemuelDayaday.web.app 
+
+![Image](https://github.com/johndydyyy/AttendanceManagement/blob/main/Screenshot%202025-12-24%20181617.png)
+![Image](https://github.com/johndydyyy/AttendanceManagement/blob/main/Screenshot%202025-12-24%20181656.png)
+![Image](https://github.com/johndydyyy/AttendanceManagement/blob/main/Screenshot%202025-12-24%20181706.png)
