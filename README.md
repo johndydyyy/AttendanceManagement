@@ -1,4 +1,4 @@
-# 📊 Attendance Management System
+#  Attendance Management System
 
 A streamlined, web-based solution for managing employee attendance, tracking records, and administrative oversight. Built with a focus on simplicity and ease of use.
 
@@ -14,7 +14,7 @@ A streamlined, web-based solution for managing employee attendance, tracking rec
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
 ### 1. Secure Login Portal
 The gateway to the system, featuring a clean and minimal design.
@@ -30,7 +30,7 @@ Detailed view for individual employees, allowing admins to track history and sav
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 * **Frontend**: HTML5, CSS3 
 * **Backend**: PHP
@@ -39,7 +39,7 @@ Detailed view for individual employees, allowing admins to track history and sav
 
 ---
 
-## ⚙️ Installation & Setup
+##  Installation & Setup
 
 1.  **Clone the Repository**
     ```bash
@@ -58,7 +58,7 @@ Detailed view for individual employees, allowing admins to track history and sav
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -67,12 +67,6 @@ Contributions are what make the open-source community such an amazing place to l
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
----
-
-## 📝 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 **Developed by John Lemuel Dayaday** JohnLemuelDayaday.web.app 
